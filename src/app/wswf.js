@@ -1,10 +1,13 @@
-export function printOrder(actions) {
-    // TODO: incorrect: doesn't consider the possibility of equality!
+export function printOrder(actionECPairs) {
     let result = '';
-    for (let i = 0; i < actions.length; i++) {
-      result += actions[i];
-      if (i !== actions.length -1) {
-        result += ' < ';
+    for (let i = 0; i < actionECPairs.length; i++) {
+      result += actionECPairs[i][0];
+      if (i !== actionECPairs.length -1) {
+        if (actionECPairs[i][1] !== actionECPairs[i+1][1]) {
+            result += ' < ';
+        } else {
+            result += ' = ';
+        }
       }
     }
     return result;
@@ -30,7 +33,7 @@ export function mec(T, A, c) {
         result.push([a, expectedChoiceworthiness]);
     }
     result.sort((a, b) => a[1] - b[1]);
-    return result.map(([actionA, ecA]) => actionA);
+    return result;
 }
   
 export function min(T, a, c) {
@@ -53,7 +56,7 @@ export function maximin(T, A, c) {
         result.push([a, minChoiceworthiness]);
     }
     result.sort(([actionA, mA], [actionB, mB]) => mA - mB);
-    return result.map(([actionA, mA]) => actionA);
+    return result;
 }
 
 export function median(T, a, c) {
@@ -101,5 +104,5 @@ export function hm(T, A, c) {
         result.push([a, medianChoiceworthiness]);
     }
     result.sort(([actionA, mA], [actionB, mB]) => mA - mB);
-    return result.map(([actionA, mA]) => actionA);
+    return result;
 }

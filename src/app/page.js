@@ -1,95 +1,62 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { printOrder, ec, mec, min, maximin, median, hm } from './wswf.js';
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.js</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+  const T = new Set();
+  const A = new Set();
+  const c = new Map();
+
+  const left = "l";
+  const middle = "m";
+  const right = "r";
+
+  A.add(left);
+  A.add(middle);
+  A.add(right);
+
+  const theoryD = new Map();
+  theoryD.set(left, -20);
+  theoryD.set(middle, -10);
+  theoryD.set(right, -5);
+
+  const theoryU = new Map();
+  theoryU.set(left, -1);
+  theoryU.set(middle, -2);
+  theoryU.set(right, -4);
+
+  T.add(theoryD);
+  T.add(theoryU);
+
+  c.set(theoryD, 0.1);
+  c.set(theoryU, 0.9);
+
+  const mecList = mec(T, A, c).map(([ actionA, ecA ]) => {
+    return <li>ec({actionA}) = {ec(T, actionA, c)}</li>
+  });
+
+  const maximinList = maximin(T, A, c).map(([ actionA, mA ]) => {
+    return <li>min({actionA}) = {min(T, actionA, c)}</li>
+  });
+
+  const hmList = hm(T, A, c).map(([ actionA, mA ]) => {
+    return <li>hm({actionA}) = {median(T, actionA, c)}</li>
+  });
+
+
+  return (
+    <>
+      <div>
+        <ul>{mecList}</ul>
+        MEC orders the actions: {printOrder(mec(T, A, c))}
+      </div>
+      <div>
+        <ul>{maximinList}</ul>
+        Maximin orders the actions: {printOrder(maximin(T, A, c))}
+      </div>
+      <div>
+        <ul>{hmList}</ul>
+          HM orders the actions: {printOrder(hm(T, A, c))}
+      </div>
+    </>
   );
 }
