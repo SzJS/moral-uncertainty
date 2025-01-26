@@ -1,4 +1,7 @@
-import { printOrder, ec, mec, min, maximin, median, hm } from './wswf.js';
+'use client'
+
+import { printOrder, mec, maximin, hm, indifference, vetoing } from './wswf.js';
+import { useState } from 'react';
 
 export default function Home() {
 
@@ -30,24 +33,48 @@ export default function Home() {
   c.set(theoryD, 0.1);
   c.set(theoryU, 0.9);
 
+  const [k, setK] = useState(0.05);
+
+  function handleKChange(e) {
+    setK(e.target.value);
+  }
+
+  // TODO: let T, c also be part of the state
+
   const mecList = mec(T, A, c).map(([ actionA, ecA ]) => {
-    return <li>ec({actionA}) = {ec(T, actionA, c)}</li>
+    return <li key={actionA}>ec({actionA}) = {ecA}</li>
+  });
+
+  const vetoedMecList = vetoing(T, A, c, k, mec).map(([ actionA, ecA ]) => {
+    if (ecA !== Number.NEGATIVE_INFINITY) {
+      return <li key={actionA}>ec({actionA}) = {ecA}</li>
+    } else {
+      return <li key={actionA}>{actionA} is vetoed</li>
+    }
   });
 
   const maximinList = maximin(T, A, c).map(([ actionA, mA ]) => {
-    return <li>min({actionA}) = {min(T, actionA, c)}</li>
+    return <li key={actionA}>min({actionA}) = {mA}</li>
   });
 
   const hmList = hm(T, A, c).map(([ actionA, mA ]) => {
-    return <li>hm({actionA}) = {median(T, actionA, c)}</li>
+    return <li key={actionA}>hm({actionA}) = {mA}</li>
   });
 
 
   return (
     <>
+      <input
+        placeholder="k"
+        value={k}
+        onChange={handleKChange}
+      />
       <div>
         <ul>{mecList}</ul>
-        MEC orders the actions: {printOrder(mec(T, A, c))}
+        <div>MEC orders the actions: {printOrder(mec(T, A, c))}</div>
+        <div>{k}-indifference-fortified MEC orders the actions: {printOrder(indifference(T, A, c, k, mec))}</div>
+        <ul>{vetoedMecList}</ul>
+        <div>{k}-vetoing-fortified MEC orders the actions: {printOrder(vetoing(T, A, c, k, mec))}</div>
       </div>
       <div>
         <ul>{maximinList}</ul>
